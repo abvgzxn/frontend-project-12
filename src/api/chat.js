@@ -17,3 +17,20 @@ export const getChannels = (token) =>
 
 export const getMessages = (token) =>
   fetchWithAuth('/api/v1/messages', token);
+
+export const sendMessage = async (token, message) => {
+  const response = await fetch('/api/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(message)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Ошибкаа: ${response.status}`);
+  }
+
+  return response.json();
+};

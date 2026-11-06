@@ -16,21 +16,21 @@ const LoginPage = () => {
 
 const navigate = useNavigate();
 const setToken = useAuthStore((state) => state.setToken);
+const setUsername = useAuthStore((state) => state.setUsername);
 
 const handleSubmit = async (values) => {
   setAuthError(null);
   try {
-    const responseData = await login(values)
+    const responseData = await login(values);
 
-    const token = responseData.token
-
-    if (token) {
-      setToken(token)
-
-      navigate('/');
-    } else {
+    if (!responseData.token) {
       throw new Error('Токен не найден в ответе сервера');
     }
+
+    setToken(responseData.token);
+    setUsername(values.username);
+
+    navigate('/');
   } catch (error) {
     console.error(`Неверное имя пользователя или пароль`, error);
     setAuthError('Неверное имя пользователя или пароль');

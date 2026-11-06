@@ -5,7 +5,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { useAuthStore } from './store/authStore.js';
 
-const App = () => {
+const App = ({ socket }) => {
   const token = useAuthStore((state) => state.token);
   return (
     <Routes>
@@ -13,7 +13,7 @@ const App = () => {
       path="/"
       element={
         <ProtectedRoute>
-          <HomePage />
+          <HomePage socket={socket} />
         </ProtectedRoute>
       }
     />
