@@ -29,8 +29,53 @@ export const sendMessage = async (token, message) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Ошибкаа: ${response.status}`);
+    throw new Error(`Ошибка: ${response.status}`);
   }
 
   return response.json();
+};
+
+export const createChannel = async (token, channel) => {
+  const response = await fetch ('/api/v1/channels', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(channel)
+  });
+  if (!response.ok) {
+    throw new Error(`Ошибка: ${response.status}`)
+  }
+
+  return response.json()
+};
+
+export const renameChannel = async (token, channelId, data) => {
+const response = await fetch (`/api/v1/channels/${channelId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) {
+    throw new Error(`Ошибка: ${response.status}`)
+  }
+
+  return response.json()
+};
+
+export const deleteChannel = async (token, channelId) => {
+const response = await fetch (`/api/v1/channels/${channelId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Ошибка: ${response.status}`)
+  }
+    return true
 };
