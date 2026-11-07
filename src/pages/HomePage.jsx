@@ -10,6 +10,7 @@ import DeleteChannelModal from '../components/DeleteChannelModal.jsx';
 import Header from '../components/Header.jsx';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
+import { cleanProfanity } from '../utils/profanityFilter.js';
 
 const HomePage = ({ socket }) => {
   const token = useAuthStore((state) => state.token);
@@ -176,8 +177,10 @@ const HomePage = ({ socket }) => {
   return;
   }
 
+  const cleanedText = cleanProfanity(text.trim());
+
   const message = {
-    body: text.trim(),
+    body: cleanedText,
     channelId: selectedChannelId,
     username,
   };

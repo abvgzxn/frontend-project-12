@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
+import { cleanProfanity } from '../utils/profanityFilter.js';
 
 const RenameChannelForm = ({
   channel,
@@ -28,7 +29,7 @@ const RenameChannelForm = ({
 
     validate: {
       name: (value) => {
-        const name = value.trim();
+        const name = cleanProfanity(value.trim());
 
         if (name.length < 3 || name.length > 20) {
           return t('renameChannel.nameLength');
@@ -54,7 +55,7 @@ const RenameChannelForm = ({
       return;
     }
 
-    const name = values.name.trim();
+    const name = cleanProfanity(values.name.trim());
 
     try {
       onPendingChange(true);

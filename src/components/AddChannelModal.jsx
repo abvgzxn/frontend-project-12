@@ -7,6 +7,7 @@ import { useChatStore } from '../store/chatStore.js';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
+import { cleanProfanity } from '../utils/profanityFilter.js';
 
 const AddChannelModal = ({ opened, onClose, channels }) => {
   const token = useAuthStore((state) => state.token);
@@ -28,7 +29,7 @@ const AddChannelModal = ({ opened, onClose, channels }) => {
 
     validate: {
     name: (value) => {
-    const name = value.trim();
+    const name = cleanProfanity(value.trim());
 
     if (name.length < 3 || name.length > 20) {
       return t('addChannel.nameLength');
@@ -61,8 +62,11 @@ const AddChannelModal = ({ opened, onClose, channels }) => {
     if (createChannelMutation.isPending) {
       return;
     }
+
+    const cleanedText = cleanProfanity(values.name.trim());
+
     const channelData = {
-      name: values.name.trim()
+      name: cleanedText
     }
 
     setCreateError(null);
