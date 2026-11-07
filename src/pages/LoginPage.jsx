@@ -1,6 +1,6 @@
 import { TextInput, PasswordInput, Button, Stack, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { login } from '../api/auth.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
@@ -59,6 +59,9 @@ const handleSubmit = async (values) => {
     )}
 
     <Button type="submit">Войти</Button>
+    <p>
+    Нет аккаунта? <Link to="/signup">Зарегистрироваться</Link>
+    </p>
   </Stack>
 </form>
   );

@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AddChannelModal from '../components/AddChannelModal.jsx';
 import RenameChannelModal from '../components/RenameChannelModal.jsx';
 import DeleteChannelModal from '../components/DeleteChannelModal.jsx';
+import Header from '../components/Header.jsx';
 
 const HomePage = ({ socket }) => {
   const token = useAuthStore((state) => state.token);
@@ -164,9 +165,13 @@ const HomePage = ({ socket }) => {
 
   return (
     <AppShell
+      header={{ height: 60 }}
       navbar={{ width: 250, breakpoint: 'sm' }}
       padding="md"
     >
+    <AppShell.Header>
+    <Header />
+    </AppShell.Header>
     <AppShell.Navbar p="md">
       <h2>Каналы</h2>
       <ul style={{ 
