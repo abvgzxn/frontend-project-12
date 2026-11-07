@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { renameChannel } from '../api/chat.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const RenameChannelForm = ({
   channel,
@@ -13,6 +14,7 @@ const RenameChannelForm = ({
 }) => {
   const token = useAuthStore((state) => state.token);
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const renameMutation = useMutation({
     mutationFn: (data) => renameChannel(token, channel.id, data),
@@ -28,7 +30,7 @@ const RenameChannelForm = ({
         const name = value.trim();
 
         if (name.length < 3 || name.length > 20) {
-          return 'Название должно содержать от 3 до 20 символов';
+          return t('renameChannel.nameLength');
         }
 
         const notUnique = channels.some(
@@ -38,7 +40,7 @@ const RenameChannelForm = ({
         );
 
         if (notUnique) {
-          return 'Канал с таким названием уже существует';
+          return t('renameChannel.nameExists');
         }
 
         return null;
@@ -67,7 +69,7 @@ const RenameChannelForm = ({
       console.error('Ошибка при переименовании канала:', error);
       form.setFieldError(
         'name',
-        'Не удалось переименовать канал. Попробуйте ещё раз.'
+        t('renameChannel.requestFailed')
       );
     } finally {
       onPendingChange(false);
@@ -77,8 +79,8 @@ const RenameChannelForm = ({
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <TextInput
-        label="Название канала"
-        placeholder="Введите новое название"
+        label={t('renameChannel.nameLabel')}
+        placeholder={t('renameChannel.namePlaceholder')}
         {...form.getInputProps('name')}
         autoFocus
       />
@@ -88,14 +90,14 @@ const RenameChannelForm = ({
         onClick={onClose}
         disabled={renameMutation.isPending}
       >
-        Отмена
+        {t('renameChannel.cancel')}
       </Button>
 
       <Button
         type="submit"
         loading={renameMutation.isPending}
       >
-        Переименовать
+        {t('renameChannel.submit')}
       </Button>
     </form>
   );
@@ -108,6 +110,7 @@ const RenameChannelModal = ({
   channels,
 }) => {
   const [isPending, setIsPending] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <Modal
@@ -117,7 +120,7 @@ const RenameChannelModal = ({
           onClose();
         }
       }}
-      title="Переименовать канал"
+      title={t('renameChannel.title')}
       centered
       closeOnEscape={!isPending}
       closeOnClickOutside={!isPending}

@@ -3,11 +3,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteChannel } from '../api/chat.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const DeleteChannelModal = ({ opened, onClose, channel }) => {
   const token = useAuthStore((state) => state.token);
   const queryClient = useQueryClient();
   const [deleteError, setDeleteError] = useState(null);
+  const { t } = useTranslation();
 
   const deleteMutation = useMutation({
   mutationFn: (channelId) => {
@@ -39,33 +41,33 @@ const DeleteChannelModal = ({ opened, onClose, channel }) => {
     handleClose();
   } catch (error) {
     console.error('Ошибка удаления канала:', error);
-    setDeleteError('Не удалось удалить канал. Попробуйте ещё раз.');
+    setDeleteError('deleteChannel.requestFailed');
   }
   };
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
-      title="Удалить канал"
+      onClose={handleClose}
+      title={t('deleteChannel.title')}
       centered
       closeOnEscape={!deleteMutation.isPending}
       closeOnClickOutside={!deleteMutation.isPending}
       withCloseButton={!deleteMutation.isPending}
     >
       <p>
-        Вы уверены, что хотите удалить канал «{channel?.name}»?
+        {t('deleteChannel.confirmation', { name: channel?.name })}
       </p>
       {deleteError && (
-    <Alert color="red" title="Ошибка удаления">
-    {deleteError}
+    <Alert color="red" title={t('deleteChannel.errorTitle')}>
+    {t(deleteError)}
     </Alert>
     )}
-      <Button type="button" disabled={deleteMutation.isPending} onClick={onClose}>
-        Отмена
+      <Button type="button" disabled={deleteMutation.isPending} onClick={handleClose}>
+        {t('deleteChannel.cancel')}
       </Button>
 
       <Button type="button" color="red" loading={deleteMutation.isPending} onClick={handleDelete}>
-        Удалить
+        {t('deleteChannel.submit')}
       </Button>
     </Modal>
   );

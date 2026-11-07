@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { signup } from '../api/auth.js';
 import { useAuthStore } from '../store/authStore.js';
+import { useTranslation } from 'react-i18next';
 
 const SignupPage = () => {
+const { t } = useTranslation();
 const form = useForm({
   initialValues: {
     username: '',
@@ -16,22 +18,22 @@ const form = useForm({
   validate: {
     username: hasLength(
       { min: 3, max: 20 },
-      'Имя пользователя должно содержать от 3 до 20 символов'
+      t('signup.usernameLength')
     ),
 
     password: hasLength(
       { min: 6 },
-      'Пароль должен содержать минимум 6 символов'
+      t('signup.passwordLength')
     ),
 
     confirmPassword: (value, values) => {
       if (!value) {
-        return 'Подтвердите пароль';
+        return t('signup.confirmRequired');
       }
 
       return value === values.password
         ? null
-        : 'Введённые пароли не совпадают';
+        : t('signup.passwordMismatch');
     },
   },
 });
@@ -60,7 +62,7 @@ const handleSubmit = async (values) => {
   try {
     const response = await signup(credentials)
     if (!response.token){
-      throw new Error ('Сервер не отвечает');
+    throw new Error('Сервер не вернул токен');
     }
 
     setToken(response.token)
@@ -69,7 +71,11 @@ const handleSubmit = async (values) => {
     navigate('/');
   } catch (error) {
     console.error('Ошибка при регистрации:', error)
-    setSignupError(error.message)
+    setSignupError(
+        error.status === 409
+      ? 'signup.usernameExists'
+      : 'signup.requestFailed'
+    );
   } finally {
     setIsSubmitting(false);
   }
@@ -79,29 +85,29 @@ const handleSubmit = async (values) => {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack>
       <TextInput
-      label="Имя пользователя"
-      placeholder="Введите логин"
+      label={t('signup.username')}
+      placeholder={t('signup.usernamePlaceholder')}
       {...form.getInputProps('username')}
       />
 
       <PasswordInput
-      label="Пароль"
-      placeholder="Введите пароль"
+      label={t('signup.password')}
+      placeholder={t('signup.passwordPlaceholder')}
       {...form.getInputProps('password')}
       />
 
       <PasswordInput
-      label="Повторите пароль"
-      placeholder="Введите пароль ещё раз"
+      label={t('signup.confirmPassword')}
+      placeholder={t('signup.confirmPasswordPlaceholder')}
       {...form.getInputProps('confirmPassword')}
       />
     {signupError && (
-     <Alert color="red" title="Ошибка регистрации">
-     {signupError}
+     <Alert color="red" title={t('signup.errorTitle')}>
+     {t(signupError)}
      </Alert>
     )}
         <Button type="submit" loading={isSubmitting}>
-          Зарегистрироваться
+          {t('signup.submit')}
         </Button>
       </Stack>
     </form>

@@ -8,11 +8,13 @@ import AddChannelModal from '../components/AddChannelModal.jsx';
 import RenameChannelModal from '../components/RenameChannelModal.jsx';
 import DeleteChannelModal from '../components/DeleteChannelModal.jsx';
 import Header from '../components/Header.jsx';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = ({ socket }) => {
   const token = useAuthStore((state) => state.token);
   const queryClient = useQueryClient();
   const username = useAuthStore((state) => state.username);
+  const { t } = useTranslation();
 
   useEffect(() => {
   const handleNewMessage = (message) => {
@@ -150,17 +152,17 @@ const HomePage = ({ socket }) => {
   await messageMutation.mutateAsync(message);
   setText('');
   } catch (error) {
-    console.error(`Не удалось отправить сообщение`, error);
-    setSendError('Не удалось отправить сообщение. Попробуйте ещё раз.')
+    console.error('chat.sendError', error);
+    setSendError ('chat.sendError')
   }
 };
 
   if (channelsLoading || messagesLoading) {
-    return <p>Загрузка данных чата...</p>;
+    return <p>{t('chat.loading')}</p>;
   }
 
   if (channelsError || messagesError) {
-    return <p>Не удалось загрузить данные чата</p>;
+    return <p>{t('chat.loadError')}</p>;
   }
 
   return (
@@ -173,7 +175,7 @@ const HomePage = ({ socket }) => {
     <Header />
     </AppShell.Header>
     <AppShell.Navbar p="md">
-      <h2>Каналы</h2>
+      <h2>{t('channels.title')}</h2>
       <ul style={{ 
       listStyle: 'none',
       margin: 0,
@@ -213,7 +215,7 @@ const HomePage = ({ socket }) => {
           <Button
             type="button"
             variant="subtle"
-            aria-label={`Управление каналом ${channel.name}`}
+            aria-label={t('channels.manage', { name: channel.name })}
             style={{ flexShrink: 0 }}
             w={36}
             px={0}
@@ -224,14 +226,14 @@ const HomePage = ({ socket }) => {
 
         <Menu.Dropdown>
           <Menu.Item onClick={() => setChannelToRename(channel)}>
-            Переименовать
+            {t('channels.rename')}
           </Menu.Item>
 
           <Menu.Item
             color="red"
             onClick={() => setChannelToDelete(channel)}
           >
-            Удалить
+            {t('channels.remove')}
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -241,12 +243,12 @@ const HomePage = ({ socket }) => {
         ))}
       </ul>
       <Button mt="md" fullWidth onClick={() => setAddChannelOpened(true)}>
-        + Добавить канал
+        {t('channels.add')}
       </Button>
       </AppShell.Navbar>
         <AppShell.Main>
       <h2># {selectedChannel?.name}</h2>
-      <h2>Сообщения</h2>
+      <h2>{t('messages.title')}</h2>
       <ul>
         {visibleMessages.map((message) => (
           <li key={message.id}>
@@ -257,8 +259,8 @@ const HomePage = ({ socket }) => {
         <Textarea
       value={text}
       onChange={(event) => setText(event.currentTarget.value)}
-      placeholder='Введите сообщение...' 
-      aria-label="Текст сообщения"
+      placeholder={t('messages.placeholder')}
+      aria-label={t('messages.label')}
       autosize
       minRows={1}
       maxRows={6}
@@ -274,15 +276,15 @@ const HomePage = ({ socket }) => {
       }}
       />
       {sendError && (
-        <Alert color="red" title="Ошибка отправки">
-          {sendError}
+        <Alert color="red" title={t('chat.sendErrorTitle')}>
+          {t(sendError)}
         </Alert>
       )}
       <Button 
       type='button'
       onClick={handleSendMessage}
       loading={messageMutation.isPending}
-      disabled={!text.trim() || !username || !selectedChannelId} >Отправить</Button>
+      disabled={!text.trim() || !username || !selectedChannelId} >{t('messages.send')}</Button>
       </AppShell.Main>
       <AddChannelModal
         opened={addChannelOpened}

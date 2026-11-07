@@ -4,66 +4,69 @@ import { useNavigate, Link } from 'react-router';
 import { login } from '../api/auth.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const LoginPage = () => {
   const [authError, setAuthError] = useState(null);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  
+  const setToken = useAuthStore((state) => state.setToken);
+  const setUsername = useAuthStore((state) => state.setUsername);
+
   const form = useForm({
     initialValues: {
-    username: '',
-    password: '',
+      username: '',
+      password: '',
     },
   });
 
-const navigate = useNavigate();
-const setToken = useAuthStore((state) => state.setToken);
-const setUsername = useAuthStore((state) => state.setUsername);
+  const handleSubmit = async (values) => {
+    setAuthError(null);
+    try {
+      const responseData = await login(values);
 
-const handleSubmit = async (values) => {
-  setAuthError(null);
-  try {
-    const responseData = await login(values);
+      if (!responseData.token) {
+        throw new Error('Токен не найден в ответе сервера');
+      }
 
-    if (!responseData.token) {
-      throw new Error('Токен не найден в ответе сервера');
+      setToken(responseData.token);
+      setUsername(values.username);
+
+      navigate('/');
+    } catch (error) {
+      console.error(`Ошибка авторизации`, error);
+      setAuthError('login.invalidCredentials');
     }
-
-    setToken(responseData.token);
-    setUsername(values.username);
-
-    navigate('/');
-  } catch (error) {
-    console.error(`Неверное имя пользователя или пароль`, error);
-    setAuthError('Неверное имя пользователя или пароль');
-  }
-};
+  };
 
   return (
-<form onSubmit={form.onSubmit(handleSubmit)}>
-  <Stack>
-    <TextInput
-      label="Имя пользователя"
-      placeholder="Введите логин"
-      {...form.getInputProps('username')}
-    />
+    <form onSubmit={form.onSubmit(handleSubmit)}>
+      <Stack>
+        <TextInput
+          label={t('login.username')}
+          placeholder={t('login.usernamePlaceholder')}
+          {...form.getInputProps('username')}
+        />
 
-    <PasswordInput
-      label="Пароль"
-      placeholder="Введите пароль"
-      {...form.getInputProps('password')}
-    />
+        <PasswordInput
+          label={t('login.password')}
+          placeholder={t('login.passwordPlaceholder')}
+          {...form.getInputProps('password')}
+        />
 
         {authError && (
-      <Alert color="red" title="Ошибка авторизации">
-        {authError}
-      </Alert>
-    )}
+          <Alert color="red" title={t('login.errorTitle')}>
+            {t(authError)}
+          </Alert>
+        )}
 
-    <Button type="submit">Войти</Button>
-    <p>
-    Нет аккаунта? <Link to="/signup">Зарегистрироваться</Link>
-    </p>
-  </Stack>
-</form>
+        <Button type="submit">{t('login.submit')}</Button>
+        <p>
+          {t('login.noAccount')} <Link to="/signup">{t('login.signup')}</Link>
+        </p>
+      </Stack>
+    </form>
   );
 };
 

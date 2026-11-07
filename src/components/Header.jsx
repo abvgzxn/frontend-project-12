@@ -1,11 +1,13 @@
 import { Link, useNavigate } from 'react-router';
 import { Button, Group } from '@mantine/core';
 import { useAuthStore } from '../store/authStore.js';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const token = useAuthStore((state) => state.token);
   const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout()
@@ -14,11 +16,11 @@ const Header = () => {
 
   return (
     <Group justify="space-between" p="md">
-      <Link to="/">Hexlet Chat</Link>
+      <Link to="/">{t('header.title')}</Link>
 
       {token && (
         <Button onClick={handleLogout}>
-          Выйти
+          {t('header.logout')}
         </Button>
       )}
     </Group>
