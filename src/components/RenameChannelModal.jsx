@@ -5,6 +5,7 @@ import { renameChannel } from '../api/chat.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { notifications } from '@mantine/notifications';
 
 const RenameChannelForm = ({
   channel,
@@ -62,6 +63,12 @@ const RenameChannelForm = ({
 
       await queryClient.invalidateQueries({
         queryKey: ['channels'],
+      });
+
+      notifications.show({
+        title: t('notifications.successTitle'),
+        message: t('notifications.channelRenamed', { name }),
+        color: 'green',
       });
 
       onClose();

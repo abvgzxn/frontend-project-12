@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../store/authStore.js';
 import { getChannels, getMessages, sendMessage } from '../api/chat.js';
 import { useChatStore } from '../store/chatStore.js';
@@ -9,12 +9,14 @@ import RenameChannelModal from '../components/RenameChannelModal.jsx';
 import DeleteChannelModal from '../components/DeleteChannelModal.jsx';
 import Header from '../components/Header.jsx';
 import { useTranslation } from 'react-i18next';
+import { notifications } from '@mantine/notifications';
 
 const HomePage = ({ socket }) => {
   const token = useAuthStore((state) => state.token);
   const queryClient = useQueryClient();
   const username = useAuthStore((state) => state.username);
   const { t } = useTranslation();
+  const wasDisconnected = useRef(false);
 
   useEffect(() => {
   const handleNewMessage = (message) => {
@@ -83,6 +85,27 @@ const HomePage = ({ socket }) => {
     queryClient.invalidateQueries({
       queryKey: ['channels'],
     });
+    if (wasDisconnected.current) {
+   notifications.hide('socket-disconnected');
+
+    notifications.show({
+    id: 'socket-reconnected',
+    title: t('notifications.successTitle'),
+    message: t('notifications.serverReconnected'),
+    color: 'green',
+    });
+  wasDisconnected.current = false;
+    }
+  };
+
+  const handleDisconnect = () => {
+  wasDisconnected.current = true;
+  notifications.show({
+    id: 'socket-disconnected',
+    title: t('notifications.errorTitle'),
+    message: t('notifications.serverDisconnected'),
+    color: 'red',
+    });
   };
 
   socket.on('connect', handleConnect);
@@ -90,6 +113,7 @@ const HomePage = ({ socket }) => {
   socket.on('newChannel', handleNewChannel);
   socket.on('renameChannel', handleRenameChannel);
   socket.on('removeChannel', handleRemoveChannel);
+  socket.on('disconnect', handleDisconnect);
 
   return () => {
     socket.off('newMessage', handleNewMessage);
@@ -97,8 +121,9 @@ const HomePage = ({ socket }) => {
     socket.off('newChannel', handleNewChannel);
     socket.off('renameChannel', handleRenameChannel);
     socket.off('removeChannel', handleRemoveChannel);
+    socket.off('disconnect', handleDisconnect);
   };
-}, [socket, queryClient]);
+}, [socket, queryClient, t]);
 
   const messageMutation = useMutation({
   mutationFn: (message) => sendMessage(token, message),
@@ -124,6 +149,17 @@ const HomePage = ({ socket }) => {
   queryFn: () => getMessages(token),
   enabled: Boolean(token)
 });
+
+  useEffect(() => {
+  if (channelsError || messagesError) {
+    notifications.show({
+        id: 'chat-load-error',
+        title: t('notifications.errorTitle'),
+        message: t('notifications.loadError'),
+        color: 'red',
+      });
+  }
+  }, [channelsError, messagesError, t]);
 
   const selectedChannel = channels.find(
     (channel) => channel.id === activeChannelId

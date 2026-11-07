@@ -4,6 +4,7 @@ import { deleteChannel } from '../api/chat.js';
 import { useAuthStore } from '../store/authStore.js';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { notifications } from '@mantine/notifications';
 
 const DeleteChannelModal = ({ opened, onClose, channel }) => {
   const token = useAuthStore((state) => state.token);
@@ -36,6 +37,15 @@ const DeleteChannelModal = ({ opened, onClose, channel }) => {
 
     await queryClient.invalidateQueries({
         queryKey: ['messages'],
+      });
+
+
+      notifications.show({
+        title: t('notifications.successTitle'),
+        message: t('notifications.channelDeleted', {
+          name: channel.name,
+        }),
+        color: 'green',
       });
 
     handleClose();

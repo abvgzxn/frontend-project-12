@@ -82,6 +82,18 @@
   "notFound": {
     "main": "На главную",
     "title": "Страница не найдена"
+  },
+  "notifications": {
+    "channelCreated": "Канал «{{name}}» успешно создан",
+    "channelRenamed": "Канал «{{name}}» переименован",
+    "channelDeleted": "Канал «{{name}}» удалён",
+    "loadError": "Не удалось загрузить данные чата",
+    "offline": "Соединение с сетью потеряно",
+    "online": "Соединение восстановлено",
+    "successTitle": "Успешно",
+    "errorTitle": "Ошибка",
+    "serverDisconnected": "Соединение с сервером чата потеряно",
+    "serverReconnected": "Соединение с сервером чата восстановлено"
   }
 }
 

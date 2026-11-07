@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore.js';
 import { useChatStore } from '../store/chatStore.js';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { notifications } from '@mantine/notifications';
 
 const AddChannelModal = ({ opened, onClose, channels }) => {
   const token = useAuthStore((state) => state.token);
@@ -57,6 +58,9 @@ const AddChannelModal = ({ opened, onClose, channels }) => {
   };
 
   const handleSubmit = async (values) => {
+    if (createChannelMutation.isPending) {
+      return;
+    }
     const channelData = {
       name: values.name.trim()
     }
@@ -67,6 +71,13 @@ const AddChannelModal = ({ opened, onClose, channels }) => {
       const newChannel = await createChannelMutation.mutateAsync(channelData);
       await queryClient.invalidateQueries({ queryKey: ['channels'] })
       setActiveChannelId(newChannel.id);
+      notifications.show({
+      title: t('notifications.successTitle'),
+      message: t('notifications.channelCreated', {
+      name: newChannel.name,
+      }),
+        color: 'green',
+      });
       form.reset()
       onClose()
     } catch (error){
