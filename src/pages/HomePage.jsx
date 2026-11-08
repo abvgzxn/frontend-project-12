@@ -287,7 +287,7 @@ const HomePage = ({ socket }) => {
           </Alert>
         ) : (
           <>
-            <h2># {selectedChannel?.name}</h2>
+            <h2>{selectedChannel?.name}</h2>
             <h2>{t('messages.title')}</h2>
 
             <ul>
