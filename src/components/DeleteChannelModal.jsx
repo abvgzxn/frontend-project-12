@@ -1,7 +1,7 @@
 import { Modal, Button, Alert } from '@mantine/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteChannel } from '../api/chat.js';
-import { useAuthStore } from '../store/authStore.js';
+import { useAuthStore } from '../store/AuthStoreContext.jsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';

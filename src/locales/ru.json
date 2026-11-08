@@ -5,10 +5,10 @@
   },
   "channels": {
     "title": "Каналы",
-    "add": "+ Добавить канал",
+    "add": "+",
     "rename": "Переименовать",
     "remove": "Удалить",
-    "manage": "Управление каналом {{name}}"
+    "manage": "Управление каналом"
   },
   "messages": {
     "title": "Сообщения",
@@ -17,29 +17,30 @@
     "messageLabel": "Текст сообщения"
   },
   "login": {
-    "username": "Имя пользователя",
+    "username": "Ваш ник",
     "usernamePlaceholder": "Введите логин",
     "password": "Пароль",
     "passwordPlaceholder": "Введите пароль",
     "submit": "Войти",
+    "connectionError": "Ошибка соединения",
     "errorTitle": "Ошибка авторизации",
-    "invalidCredentials": "Неверное имя пользователя или пароль",
+    "invalidCredentials": "Неверные имя пользователя или пароль",
     "noAccount": "Нет аккаунта?",
-    "signup": "Зарегистрироваться"
+    "signup": "Регистрация"
   },
   "signup": {
-    "username": "Имя пользователя",
+    "username": "Ваш ник",
     "usernamePlaceholder": "Введите логин",
     "password": "Пароль",
     "passwordPlaceholder": "Введите пароль",
-    "confirmPassword": "Повторите пароль",
+    "confirmPassword": "Подтвердите пароль",
     "confirmPasswordPlaceholder": "Введите пароль ещё раз",
     "submit": "Зарегистрироваться",
     "errorTitle": "Ошибка регистрации",
-    "usernameLength": "Имя пользователя должно содержать от 3 до 20 символов",
-    "passwordLength": "Пароль должен содержать минимум 6 символов",
+    "usernameLength": "От 3 до 20 символов",
+    "passwordLength": "Не менее 6 символов",
     "confirmRequired": "Подтвердите пароль",
-    "passwordMismatch": "Введённые пароли не совпадают",
+    "passwordMismatch": "Пароли должны совпадать",
     "usernameExists": "Пользователь с таким именем уже существует",
     "requestFailed": "Не удалось зарегистрироваться. Попробуйте ещё раз"
   },
@@ -52,20 +53,20 @@
   },
   "addChannel": {
     "title": "Добавить канал",
-    "nameLabel": "Название канала",
+    "nameLabel": "Имя канала",
     "namePlaceholder": "Введите название",
     "close": "Закрыть",
     "submit": "Создать канал",
-    "nameLength": "Название должно содержать от 3 до 20 символов",
+    "nameLength": "От 3 до 20 символов",
     "nameExists": "Канал с таким названием уже существует",
     "errorTitle": "Ошибка создания канала",
     "requestFailed": "Не удалось создать канал. Попробуйте ещё раз."
   },
     "renameChannel": {
     "title": "Переименовать канал",
-    "nameLabel": "Название канала",
+    "nameLabel": "Имя канала",
     "namePlaceholder": "Введите новое название",
-    "nameLength": "Название должно содержать от 3 до 20 символов",
+    "nameLength": "От 3 до 20 символов",
     "nameExists": "Канал с таким названием уже существует",
     "requestFailed": "Не удалось переименовать канал. Попробуйте ещё раз.",
     "cancel": "Отмена",
@@ -84,11 +85,11 @@
     "title": "Страница не найдена"
   },
   "notifications": {
-    "channelCreated": "Канал «{{name}}» успешно создан",
-    "channelRenamed": "Канал «{{name}}» переименован",
-    "channelDeleted": "Канал «{{name}}» удалён",
+    "channelCreated": "Канал создан",
+    "channelRenamed": "Канал переименован",
+    "channelDeleted": "Канал удалён",
     "loadError": "Не удалось загрузить данные чата",
-    "offline": "Соединение с сетью потеряно",
+    "offline": "Ошибка соединения",
     "online": "Соединение восстановлено",
     "successTitle": "Успешно",
     "errorTitle": "Ошибка",

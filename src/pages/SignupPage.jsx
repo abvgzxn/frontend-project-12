@@ -3,7 +3,7 @@ import { useForm, hasLength } from '@mantine/form';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { signup } from '../api/auth.js';
-import { useAuthStore } from '../store/authStore.js';
+import { useAuthStore } from '../store/AuthStoreContext.jsx';
 import { useTranslation } from 'react-i18next';
 
 const SignupPage = () => {

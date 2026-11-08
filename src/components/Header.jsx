@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router';
 import { Button, Group } from '@mantine/core';
-import { useAuthStore } from '../store/authStore.js';
+import { useAuthStore } from '../store/AuthStoreContext.jsx';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
+import { useChatStore } from '../store/ChatStoreContext.jsx';
 
 const Header = () => {
   const token = useAuthStore((state) => state.token);
@@ -9,7 +11,16 @@ const Header = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const queryClient = useQueryClient();
+
+  const setActiveChannelId = useChatStore(
+    (state) => state.setActiveChannelId
+  );
+
   const handleLogout = () => {
+    queryClient.cancelQueries();
+    queryClient.clear();
+    setActiveChannelId(null);
     logout()
     navigate('/login', { replace: true });
   };

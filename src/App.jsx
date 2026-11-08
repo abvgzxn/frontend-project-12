@@ -3,7 +3,7 @@ import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import { useAuthStore } from './store/authStore.js';
+import { useAuthStore } from './store/AuthStoreContext.jsx';
 import SignupPage from './pages/SignupPage.jsx';
 import Header from './components/Header.jsx';
 

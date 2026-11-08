@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuthStore } from '../store/authStore.js';
+import { useAuthStore } from '../store/AuthStoreContext.jsx';
 import { getChannels, getMessages, sendMessage } from '../api/chat.js';
-import { useChatStore } from '../store/chatStore.js';
+import { useChatStore, useChatStoreApi } from '../store/ChatStoreContext.jsx';
 import { AppShell, Button, Textarea, Alert, Menu, Group } from '@mantine/core';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AddChannelModal from '../components/AddChannelModal.jsx';
@@ -18,6 +18,7 @@ const HomePage = ({ socket }) => {
   const username = useAuthStore((state) => state.username);
   const { t } = useTranslation();
   const wasDisconnected = useRef(false);
+  const chatStore = useChatStoreApi();
 
   useEffect(() => {
   const handleNewMessage = (message) => {
@@ -63,7 +64,7 @@ const HomePage = ({ socket }) => {
     );
   });
 
-  const currentChannelId = useChatStore.getState().activeChannelId;
+  const currentChannelId = chatStore.getState().activeChannelId;
 
   if (currentChannelId === removedChannel.id) {
     const currentChannels = queryClient.getQueryData(['channels']);
@@ -73,7 +74,7 @@ const HomePage = ({ socket }) => {
     );
 
     if (generalChannel) {
-      useChatStore.getState().setActiveChannelId(generalChannel.id);
+      chatStore.getState().setActiveChannelId(generalChannel.id);
     }
   }
   };
@@ -124,7 +125,7 @@ const HomePage = ({ socket }) => {
     socket.off('removeChannel', handleRemoveChannel);
     socket.off('disconnect', handleDisconnect);
   };
-}, [socket, queryClient, t]);
+}, [socket, queryClient, t, chatStore]);
 
   const messageMutation = useMutation({
   mutationFn: (message) => sendMessage(token, message),
@@ -196,14 +197,6 @@ const HomePage = ({ socket }) => {
   }
 };
 
-  if (channelsLoading || messagesLoading) {
-    return <p>{t('chat.loading')}</p>;
-  }
-
-  if (channelsError || messagesError) {
-    return <p>{t('chat.loadError')}</p>;
-  }
-
   return (
     <AppShell
       header={{ height: 60 }}
@@ -254,7 +247,7 @@ const HomePage = ({ socket }) => {
           <Button
             type="button"
             variant="subtle"
-            aria-label={t('channels.manage', { name: channel.name })}
+            aria-label={t('channels.manage')}
             style={{ flexShrink: 0 }}
             w={36}
             px={0}
@@ -286,44 +279,61 @@ const HomePage = ({ socket }) => {
       </Button>
       </AppShell.Navbar>
         <AppShell.Main>
-      <h2># {selectedChannel?.name}</h2>
-      <h2>{t('messages.title')}</h2>
-      <ul>
-        {visibleMessages.map((message) => (
-          <li key={message.id}>
-            <strong>{message.username}:</strong> {message.body}
-          </li>
-        ))}
-      </ul>
-        <Textarea
-      value={text}
-      onChange={(event) => setText(event.currentTarget.value)}
-      placeholder={t('messages.placeholder')}
-      aria-label={t('messages.label')}
-      autosize
-      minRows={1}
-      maxRows={6}
-      onKeyDown={(event) => {
-        if (
-          event.key === 'Enter'
-          && !event.shiftKey
-          && !event.nativeEvent.isComposing
-        ) {
-          event.preventDefault();
-          handleSendMessage();
-        }
-      }}
-      />
-      {sendError && (
-        <Alert color="red" title={t('chat.sendErrorTitle')}>
-          {t(sendError)}
-        </Alert>
-      )}
-      <Button 
-      type='button'
-      onClick={handleSendMessage}
-      loading={messageMutation.isPending}
-      disabled={!text.trim() || !username || !selectedChannelId} >{t('messages.send')}</Button>
+        {channelsLoading || messagesLoading ? (
+          <p>{t('chat.loading')}</p>
+        ) : channelsError || messagesError ? (
+          <Alert color="red">
+            {t('chat.loadError')}
+          </Alert>
+        ) : (
+          <>
+            <h2># {selectedChannel?.name}</h2>
+            <h2>{t('messages.title')}</h2>
+
+            <ul>
+              {visibleMessages.map((message) => (
+                <li key={message.id}>
+                  <strong>{message.username}:</strong> {message.body}
+                </li>
+              ))}
+            </ul>
+
+            <Textarea
+              value={text}
+              onChange={(event) => setText(event.currentTarget.value)}
+              placeholder={t('messages.placeholder')}
+              aria-label={t('messages.messageLabel')}
+              autosize
+              minRows={1}
+              maxRows={6}
+              onKeyDown={(event) => {
+                if (
+                  event.key === 'Enter'
+                  && !event.shiftKey
+                  && !event.nativeEvent.isComposing
+                ) {
+                  event.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+            />
+
+            {sendError && (
+              <Alert color="red" title={t('chat.sendErrorTitle')}>
+                {t(sendError)}
+              </Alert>
+            )}
+
+            <Button
+              type="button"
+              onClick={handleSendMessage}
+              loading={messageMutation.isPending}
+              disabled={!text.trim() || !username || !selectedChannelId}
+            >
+              {t('messages.send')}
+            </Button>
+          </>
+        )}
       </AppShell.Main>
       <AddChannelModal
         opened={addChannelOpened}
