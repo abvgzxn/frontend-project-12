@@ -14,7 +14,7 @@
     "title": "Сообщения",
     "placeholder": "Введите сообщение...",
     "send": "Отправить",
-    "messageLabel": "Текст сообщения"
+    "messageLabel": "Новое сообщение"
   },
   "login": {
     "username": "Ваш ник",
@@ -29,7 +29,7 @@
     "signup": "Регистрация"
   },
   "signup": {
-    "username": "Ваш ник",
+    "username": "Имя пользователя",
     "usernamePlaceholder": "Введите логин",
     "password": "Пароль",
     "passwordPlaceholder": "Введите пароль",
